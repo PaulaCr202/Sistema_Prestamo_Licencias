@@ -17,9 +17,9 @@ namespace Catalog.Domain.Entities.Categories
         {
         }
 
-        public Category(Guid id, string nombre)
+        public Category(string nombre)
         {
-            Id = id;
+            Id = Guid.CreateVersion7();
             Nombre = new Nombre(nombre);
         }
     }

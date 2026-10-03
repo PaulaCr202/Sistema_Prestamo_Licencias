@@ -6,7 +6,7 @@ using Catalog.Domain.Exceptions;
 
 namespace Catalog.Domain.Common.ValueObjects
 {
-    public sealed class Nombre
+    public sealed record Nombre
     {
         public string Valor { get; private set; }
 
