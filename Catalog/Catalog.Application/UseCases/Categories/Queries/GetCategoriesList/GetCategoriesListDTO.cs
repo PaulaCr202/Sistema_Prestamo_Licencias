@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Catalog.Application.UseCases.Categories.Queries.GetCategoriesList
 {
-    public class GestCategoriesListDTO
+    public class GetCategoriesListDTO
     {
         public Guid Id { get; init; }
-
         public string Nombre { get; init; } = null!;
     }
 }

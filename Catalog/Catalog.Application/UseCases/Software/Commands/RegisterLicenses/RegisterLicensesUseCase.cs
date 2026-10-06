@@ -4,10 +4,7 @@ using Catalog.Application.Contracts.Repositories;
 using Catalog.Application.Exceptions;
 using Catalog.Application.Utilities.Mediator;
 using Catalog.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Catalog.Domain.Entities.License;
+using LicenseEntity = Catalog.Domain.Entities.License.License;
 
 namespace Catalog.Application.UseCases.Software.Commands.RegisterLicenses
 {
@@ -39,7 +36,7 @@ namespace Catalog.Application.UseCases.Software.Commands.RegisterLicenses
 
             for (var i = 0; i < command.Quantity; i++)
             {
-                var license = new License(software.Id); // el Dominio valida el SoftwareId
+                var license = new LicenseEntity(software.Id); // el Dominio valida el SoftwareId
                 await _licenseRepository.CreateAsync(license);
                 ids.Add(license.Id);
             }
