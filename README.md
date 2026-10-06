@@ -178,7 +178,7 @@ Edita (o crea) `Catalog.Api/appsettings.Development.json` con tus propios datos 
 }
 ```
 
-> ⚠️ Esta configuración es local de cada desarrollador y no debería subirse al repositorio con credenciales reales.
+> ⚠️ Esta configuración es local de cada desarrollador.
 
 ### 3. Aplicar las migraciones
 
@@ -203,7 +203,7 @@ Al arrancar, el `DataBaseSeeder` puebla automáticamente datos de prueba (5 cate
 Con la aplicación corriendo, abre en el navegador:
 
 ```
-https://localhost:{PUERTO}/swagger
+http://localhost:{PUERTO}/swagger
 ```
 
 (el puerto exacto aparece en la consola al ejecutar `dotnet run`)
