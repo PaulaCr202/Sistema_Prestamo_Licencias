@@ -4,9 +4,9 @@
 
 - [Maria Paula Carmona Rojas] 
 - [Manuela Sanchez Pareja] 
-- [Sofia] 
-- [Paulina Vargas]
-- [Mariana Suaza]
+- [Sofia Ortiz Serna] 
+- [Maria Paulina Vargas Lenis]
+- [Mariana Suaza Serna]
 
 
 Microservicio de **catálogo** para un sistema de préstamo de licencias de software. Administra la información de software disponible, sus categorías y las licencias prestables de cada uno.
