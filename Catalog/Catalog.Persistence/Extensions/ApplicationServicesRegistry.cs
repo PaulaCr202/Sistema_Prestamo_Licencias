@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Catalog.Application.UseCases.Categories.Commands.CreateCategory;
+using Catalog.Application.UseCases.Categories.Queries.GetCategoriesList;
+using Catalog.Application.UseCases.License.GetLicenseList;
 using Catalog.Application.UseCases.Software.Commands.CreateSoftware;
 using Catalog.Application.UseCases.Software.Commands.RegisterLicenses;
 using Catalog.Application.UseCases.Software.Queries;
@@ -24,6 +24,9 @@ public static class ApplicationServicesRegistry
         services.AddScoped<IRequestHandler<GetSoftwareListQuery, PaginationResponse<SoftwareDTO>>, GetSoftwareListUseCase>();
         services.AddScoped<IRequestHandler<GetSoftwareByIdQuery, SoftwareDTO?>, GetSoftwareByIdUseCase>();
         services.AddScoped<IRequestHandler<GetSoftwareByCategoryQuery, List<SoftwareDTO>>, GetSoftwareByCategoryUseCase>();
+        services.AddScoped<IRequestHandler<CreateCategoryCommand, Guid>, CreateCategoryUseCase>();
+        services.AddScoped<IRequestHandler<GetCategoriesListQuery, PaginationResponse<GetCategoriesListDTO>>, GetCategoriesListUseCase>();
+        services.AddScoped<IRequestHandler<GetLicenseListQuery, PaginationResponse<GetLicenseListDTO>>, GetLicenseListUseCase>();
 
         return services;
     }
