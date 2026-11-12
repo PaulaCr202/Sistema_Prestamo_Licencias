@@ -5,6 +5,7 @@ using Catalog.Application.UseCases.Software.Queries.GetSoftwareById;
 using Catalog.Application.UseCases.Software.Queries.GetSoftwareList;
 using Catalog.Application.Utilities.Mediator;
 using Catalog.Domain.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers;
@@ -13,6 +14,7 @@ public record RegisterLicensesRequest(int Quantity);
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SoftwareController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -51,6 +53,7 @@ public class SoftwareController : ControllerBase
 
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Catalog Manager")]
     public async Task<IActionResult> Create([FromBody] CreateSoftwareCommand command)
     {
         try
@@ -66,6 +69,7 @@ public class SoftwareController : ControllerBase
 
 
     [HttpPost("{softwareId:guid}/licenses")]
+    [Authorize(Roles = "Admin,Catalog Manager")]
     public async Task<IActionResult> RegisterLicenses(Guid softwareId, [FromBody] RegisterLicensesRequest request)
     {
         try
