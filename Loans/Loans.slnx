@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Loans.Application/Loans.Application.csproj" Id="be6355de-d61e-4510-8f8e-62259d9d21ba" />
+    <Project Path="Loans.Domain/Loans.Domain.csproj" Id="39ea10db-907b-4206-8567-f3d22e879298" />
+  </Folder>
+  <Folder Name="/Infraestructure/">
+    <Project Path="Loans.Persistence/Loans.Persistence.csproj" Id="e158e9b4-bf41-48fd-87f0-dbff54bf3871" />
+  </Folder>
+  <Folder Name="/Presenters/">
+    <Project Path="Loans.Api/Loans.Api.csproj" Id="c288b816-5a35-48d5-9473-66883151a853" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Loans.Tests/Loans.Tests.csproj" Id="370c5d34-c4c6-4342-815c-7eb81916c42a" />
+  </Folder>
+</Solution>

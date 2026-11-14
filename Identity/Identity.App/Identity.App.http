@@ -1,0 +1,30 @@
+@host = http://localhost:5086
+
+### 1. Login (admin)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@licencias.local", "password": "1234*" }
+
+### 2. Login con contraseña incorrecta (debe dar 401)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@licencias.local", "password": "mala" }
+
+### 3. Listar usuarios SIN token (debe dar 401)
+GET {{host}}/api/users
+
+### 4. Listar usuarios CON token de admin (pega el accessToken del paso 1)
+GET {{host}}/api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODEyYmRkOS00YjY0LTQzNGMtNWI3Ny0wOGRmNDA1N2FmY2IiLCJuYW1lIjoiYWRtaW5AbGljZW5jaWFzLmxvY2FsIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiI2ODEyYmRkOS00YjY0LTQzNGMtNWI3Ny0wOGRmNDA1N2FmY2IiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW5AbGljZW5jaWFzLmxvY2FsIiwiZmlyc3ROYW1lIjoiQWRtaW4iLCJsYXN0TmFtZSI6IlVzZXIiLCJkb2N1bWVudCI6IjExMTEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiQWRtaW4iLCJDYXRhbG9nIE1hbmFnZXIiXSwiZXhwIjoxNzk0NDUwMjMxLCJpc3MiOiJMaWNlbnNlcy5JZGVudGl0eSIsImF1ZCI6IkxpY2Vuc2VzLk1pY3Jvc2VydmljZXMifQ.n4cAi9GItgtIfjnfrKmNSeMW5jC0wSSt04t38_mPwtU
+
+### 5. Login como usuario normal
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "user@licencias.local", "password": "1234" }
+
+### 6. Listar usuarios con el token del usuario normal (debe dar 403)
+GET {{host}}/api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODEyYmRkOS00YjY0LTQzNGMtNWI3Ny0wOGRmNDA1N2FmY2IiLCJuYW1lIjoiYWRtaW5AbGljZW5jaWFzLmxvY2FsIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiI2ODEyYmRkOS00YjY0LTQzNGMtNWI3Ny0wOGRmNDA1N2FmY2IiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW5AbGljZW5jaWFzLmxvY2FsIiwiZmlyc3ROYW1lIjoiQWRtaW4iLCJsYXN0TmFtZSI6IlVzZXIiLCJkb2N1bWVudCI6IjExMTEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiQWRtaW4iLCJDYXRhbG9nIE1hbmFnZXIiXSwiZXhwIjoxNzk0NDUwMjMxLCJpc3MiOiJMaWNlbnNlcy5JZGVudGl0eSIsImF1ZCI6IkxpY2Vuc2VzLk1pY3Jvc2VydmljZXMifQ.n4cAi9GItgtIfjnfrKmNSeMW5jC0wSSt04t38_mPwtU

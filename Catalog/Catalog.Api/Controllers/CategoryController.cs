@@ -2,12 +2,14 @@
 using Catalog.Application.UseCases.Categories.Queries.GetCategoriesList;
 using Catalog.Application.Utilities.Mediator;
 using Catalog.Domain.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CategoryController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -25,6 +27,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Catalog Manager")]
     public async Task<IActionResult> Create([FromBody] CreateCategoryCommand command)
     {
         try
