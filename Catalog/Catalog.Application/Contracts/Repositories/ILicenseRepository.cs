@@ -10,5 +10,6 @@ namespace Catalog.Application.Contracts.Repositories
     {
         Task<IEnumerable<License>> GetBySoftwareAsync(Guid softwareId, CancellationToken cancellationToken = default);
         Task<int> CountAvailableAsync(Guid softwareId, CancellationToken cancellationToken = default);
+        Task<License?> GetFirstAvailableAsync(Guid softwareId, CancellationToken cancellationToken = default);
     }
 }
