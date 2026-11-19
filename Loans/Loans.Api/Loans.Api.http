@@ -1,6 +1,102 @@
-@Loans.Api_HostAddress = http://localhost:5119
+@identity = http://localhost:5086
+@catalog = http://localhost:5080
+@loans = http://localhost:5090
 
-GET {{Loans.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+# Orden: arrancar Identity, Catalog y Loans; ejecutar los logins y luego las peticiones de arriba hacia abajo.
 
-###
+### Login usuario normal (rol User)
+# @name loginUser
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "user@licencias.local", "password": "1234" }
+
+### Login admin (rol Admin)
+# @name loginAdmin
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@licencias.local", "password": "1234*" }
+
+### Login de otro usuario (para probar préstamos ajenos)
+# @name loginOther
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "catalogmanager@licencias.local", "password": "1234" }
+
+### Tomar un software del catálogo para pedirlo prestado
+# @name softwareList
+GET {{catalog}}/api/software
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 1. Solicitar préstamo SIN token (debe dar 401)
+POST {{loans}}/api/loans
+Content-Type: application/json
+
+{ "softwareId": "{{softwareList.response.body.$.items[0].id}}", "days": 7 }
+
+### 2. Solicitar préstamo con token válido (debe dar 201)
+# @name requestLoan
+POST {{loans}}/api/loans
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "softwareId": "{{softwareList.response.body.$.items[0].id}}", "days": 7 }
+
+### 3. Solicitar con días fuera de rango (debe dar 400)
+POST {{loans}}/api/loans
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "softwareId": "{{softwareList.response.body.$.items[0].id}}", "days": 40 }
+
+### 4. Mis préstamos (debe dar 200)
+GET {{loans}}/api/loans/my
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 5. Préstamo por Id, siendo el dueño (debe dar 200)
+GET {{loans}}/api/loans/{{requestLoan.response.body.$.id}}
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 6. Préstamo por Id con otro usuario (debe dar 403)
+GET {{loans}}/api/loans/{{requestLoan.response.body.$.id}}
+Authorization: Bearer {{loginOther.response.body.$.data.accessToken}}
+
+### 7. Extender el préstamo 3 días (debe dar 204)
+POST {{loans}}/api/loans/{{requestLoan.response.body.$.id}}/extend
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "extraDays": 3 }
+
+### 8. Extenderlo otra vez (debe dar 400: solo se extiende una vez)
+POST {{loans}}/api/loans/{{requestLoan.response.body.$.id}}/extend
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "extraDays": 3 }
+
+### 9. Lista de todos los préstamos con usuario normal (debe dar 403: requiere rol Admin)
+GET {{loans}}/api/loans
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 10. Lista de todos los préstamos con Admin (debe dar 200)
+GET {{loans}}/api/loans
+Authorization: Bearer {{loginAdmin.response.body.$.data.accessToken}}
+
+### 11. Solo vencidos, con Admin (debe dar 200)
+GET {{loans}}/api/loans?onlyOverdue=true
+Authorization: Bearer {{loginAdmin.response.body.$.data.accessToken}}
+
+### 12. Devolver el préstamo (debe dar 204 y la licencia vuelve a estar libre en Catalog)
+POST {{loans}}/api/loans/{{requestLoan.response.body.$.id}}/return
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 13. Devolverlo otra vez (debe dar 400)
+POST {{loans}}/api/loans/{{requestLoan.response.body.$.id}}/return
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 14. Token inválido (debe dar 401)
+GET {{loans}}/api/loans/my
+Authorization: Bearer token.invalido.123

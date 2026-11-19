@@ -1,4 +1,5 @@
-﻿using Catalog.Application.UseCases.Software.Commands.CreateSoftware;
+﻿using Catalog.Application.UseCases.License.Commands.AssignLicense;
+using Catalog.Application.UseCases.Software.Commands.CreateSoftware;
 using Catalog.Application.UseCases.Software.Commands.RegisterLicenses;
 using Catalog.Application.UseCases.Software.Queries.GetSoftwareByCategory;
 using Catalog.Application.UseCases.Software.Queries.GetSoftwareById;
@@ -7,6 +8,7 @@ using Catalog.Application.Utilities.Mediator;
 using Catalog.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Catalog.Application.UseCases.License.Commands.AssignLicense;
 
 namespace Catalog.Api.Controllers;
 
@@ -76,6 +78,20 @@ public class SoftwareController : ControllerBase
         {
             var licenseIds = await _mediator.Send(new RegisterLicensesCommand(softwareId, request.Quantity));
             return Ok(new { softwareId, licenseIds });
+        }
+        catch (BussinesRuleException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPost("{softwareId:guid}/licenses/assign")]
+    public async Task<IActionResult> AssignLicense(Guid softwareId)
+    {
+        try
+        {
+            var licenseId = await _mediator.Send(new AssignLicenseCommand(softwareId));
+            return Ok(new { licenseId });
         }
         catch (BussinesRuleException ex)
         {

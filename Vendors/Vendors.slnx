@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="Vendors.Api/Vendors.Api.csproj" />
   <Project Path="Vendors.Application/Vendors.Application.csproj" />
   <Project Path="Vendors.Domain/Vendors.Domain.csproj" />
+  <Project Path="Vendors.Persistence/Vendors.Persistence.csproj" />
 </Solution>
