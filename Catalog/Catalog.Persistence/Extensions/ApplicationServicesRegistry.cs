@@ -1,5 +1,7 @@
 ﻿using Catalog.Application.UseCases.Categories.Commands.CreateCategory;
 using Catalog.Application.UseCases.Categories.Queries.GetCategoriesList;
+using Catalog.Application.UseCases.License.Commands.AssignLicense;
+using Catalog.Application.UseCases.License.Commands.ReleaseLicense;
 using Catalog.Application.UseCases.License.GetLicenseList;
 using Catalog.Application.UseCases.Software.Commands.CreateSoftware;
 using Catalog.Application.UseCases.Software.Commands.RegisterLicenses;
@@ -10,6 +12,8 @@ using Catalog.Application.UseCases.Software.Queries.GetSoftwareList;
 using Catalog.Application.Utilities.Mediator;
 using Catalog.Application.Utilities.Pagination;
 using Microsoft.Extensions.DependencyInjection;
+using Catalog.Application.UseCases.License.Commands.AssignLicense;
+using Catalog.Application.UseCases.License.Commands.ReleaseLicense;
 
 namespace Catalog.Application.Extensions;
 
@@ -27,6 +31,8 @@ public static class ApplicationServicesRegistry
         services.AddScoped<IRequestHandler<CreateCategoryCommand, Guid>, CreateCategoryUseCase>();
         services.AddScoped<IRequestHandler<GetCategoriesListQuery, PaginationResponse<GetCategoriesListDTO>>, GetCategoriesListUseCase>();
         services.AddScoped<IRequestHandler<GetLicenseListQuery, PaginationResponse<GetLicenseListDTO>>, GetLicenseListUseCase>();
+        services.AddScoped<IRequestHandler<AssignLicenseCommand, Guid>, AssignLicenseUseCase>();
+        services.AddScoped<IRequestHandler<ReleaseLicenseCommand>, ReleaseLicenseUseCase>();
 
         return services;
     }

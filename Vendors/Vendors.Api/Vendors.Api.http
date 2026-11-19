@@ -1,0 +1,90 @@
+@identity = http://localhost:5086
+@host = http://localhost:5100
+
+### 1. Login admin
+# @name loginAdmin
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@licencias.local", "password": "1234*" }
+
+### 2. Login catalog manager
+# @name loginManager
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "catalogmanager@licencias.local", "password": "1234" }
+
+### 3. Login usuario normal
+# @name loginUser
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "user@licencias.local", "password": "1234" }
+
+### 4. Sin token -> 401
+GET {{host}}/api/vendors
+
+### 5. Usuario normal -> 403
+GET {{host}}/api/vendors
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 6. Catalog Manager puede listar -> 200
+GET {{host}}/api/vendors
+Authorization: Bearer {{loginManager.response.body.$.data.accessToken}}
+
+### 7. Catalog Manager NO puede crear -> 403
+POST {{host}}/api/vendors
+Authorization: Bearer {{loginManager.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "name": "Microsoft", "email": "ventas@microsoft.com", "phone": "6041234567" }
+
+### 8. Admin crea proveedor -> 201
+# @name createVendor
+POST {{host}}/api/vendors
+Authorization: Bearer {{loginAdmin.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "name": "Microsoft", "email": "ventas@microsoft.com", "phone": "6041234567" }
+
+### 9. Proveedor inválido -> 400 con errores de validación
+POST {{host}}/api/vendors
+Authorization: Bearer {{loginAdmin.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "name": "a", "email": "no-es-correo", "phone": "" }
+
+### 10. Admin crea contrato (vence pronto) -> 201
+POST {{host}}/api/contracts
+Authorization: Bearer {{loginAdmin.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{
+  "vendorId": "{{createVendor.response.body.$.id}}",
+  "contractNumber": "CT-2026-001",
+  "cost": 1500000,
+  "startDate": "2026-01-01T00:00:00Z",
+  "endDate": "2026-12-05T00:00:00Z"
+}
+
+### 11. Contrato con proveedor inexistente -> 404
+POST {{host}}/api/contracts
+Authorization: Bearer {{loginAdmin.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{
+  "vendorId": "00000000-0000-0000-0000-000000000001",
+  "contractNumber": "CT-X",
+  "cost": 1,
+  "startDate": "2026-01-01T00:00:00Z",
+  "endDate": "2026-12-05T00:00:00Z"
+}
+
+### 12. Contratos por vencer en 30 días -> 200
+GET {{host}}/api/contracts/expiring?days=30
+Authorization: Bearer {{loginManager.response.body.$.data.accessToken}}
+
+### 13. days fuera de rango -> 400
+GET {{host}}/api/contracts/expiring?days=0
+Authorization: Bearer {{loginAdmin.response.body.$.data.accessToken}}
