@@ -2,7 +2,11 @@ using System.Security.Claims;
 using Loans.Application.UseCases.Loans.Commands.ExtendLoan;
 using Loans.Application.UseCases.Loans.Commands.RequestLoan;
 using Loans.Application.UseCases.Loans.Commands.ReturnLoan;
+using Loans.Application.UseCases.Loans.Queries.GetLoanById;
+using Loans.Application.UseCases.Loans.Queries.GetLoansList;
+using Loans.Application.UseCases.Loans.Queries.GetMyLoans;
 using Loans.Application.Utilities.Mediator;
+using Loans.Application.Utilities.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,6 +49,35 @@ namespace Loans.Api.Controllers
         {
             await _mediator.Send(new ExtendLoanCommand(id, CurrentUserId, IsAdmin, body.ExtraDays));
             return NoContent();
+        }
+
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyLoans(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = PaginationRequest.DEFAULT_PAGE_SIZE)
+        {
+            var result = await _mediator.Send(
+                new GetMyLoansQuery(CurrentUserId, new PaginationRequest(pageNumber, pageSize)));
+            return Ok(result);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetLoanById(Guid id)
+        {
+            var result = await _mediator.Send(new GetLoanByIdQuery(id, CurrentUserId, IsAdmin));
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetLoansList(
+            [FromQuery] bool onlyOverdue = false,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = PaginationRequest.DEFAULT_PAGE_SIZE)
+        {
+            var result = await _mediator.Send(
+                new GetLoansListQuery(new PaginationRequest(pageNumber, pageSize), onlyOverdue));
+            return Ok(result);
         }
     }
 }
