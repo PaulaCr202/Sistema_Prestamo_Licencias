@@ -17,4 +17,9 @@ public class LicenseRepository(DataContext context)
         Guid softwareId, CancellationToken cancellationToken = default)
         => await Set.CountAsync(
             l => l.SoftwareId == softwareId && l.IsAvailable, cancellationToken);
+
+    public async Task<LicenseEntity?> GetFirstAvailableAsync(
+    Guid softwareId, CancellationToken cancellationToken = default)
+    => await Set.FirstOrDefaultAsync(
+        l => l.SoftwareId == softwareId && l.IsAvailable, cancellationToken);
 }
