@@ -1,11 +1,18 @@
 ﻿using Loans.Application.Exceptions;
 using Loans.Domain.Exceptions;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace Loans.Api.Middleware
 {
     public class ExceptionHandlingMiddleware(RequestDelegate next)
     {
+        // Deja las tildes legibles en el JSON ("está" en lugar de "est\u00E1")
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -24,7 +31,7 @@ namespace Loans.Api.Middleware
                     _ => StatusCodes.Status500InternalServerError,
                 };
 
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }, JsonOptions));
             }
         }
     }
