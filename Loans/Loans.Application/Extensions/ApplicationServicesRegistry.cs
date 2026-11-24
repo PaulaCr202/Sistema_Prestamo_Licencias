@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Loans.Application.UseCases.Commands.CreateLoan;
+using Loans.Application.UseCases.Commands.ExtendLoan;
+using Loans.Application.UseCases.Commands.ReturnLoan;
+using Loans.Application.UseCases.Loans.Queries;
+using Loans.Application.UseCases.Loans.Queries.GetAllLoans;
+using Loans.Application.UseCases.Loans.Queries.GetLoanById;
+using Loans.Application.UseCases.Loans.Queries.GetMyLoans;
 using Loans.Application.Utilities.Mediator;
 using Microsoft.Extensions.DependencyInjection;
-using Loans.Application.UseCases.Commands.CreateLoan;
-using Loans.Application.UseCases.Commands.ReturnLoan;
-using Loans.Application.UseCases.Commands.ExtendLoan;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Loans.Application.Extensions
 {
@@ -17,6 +21,9 @@ namespace Loans.Application.Extensions
             services.AddScoped<IRequestHandler<CreateLoanCommand, CreateLoanResponse>, CreateLoanUseCase>();
             services.AddScoped<IRequestHandler<ReturnLoanCommand>, ReturnLoanUseCase>();
             services.AddScoped<IRequestHandler<ExtendLoanCommand, ExtendLoanResponse>, ExtendLoanUseCase>();
+            services.AddScoped<IRequestHandler<GetMyLoansQuery, List<LoanDTO>>, GetMyLoansUseCase>();
+            services.AddScoped<IRequestHandler<GetAllLoansQuery, List<LoanDTO>>, GetAllLoansUseCase>();
+            services.AddScoped<IRequestHandler<GetLoanByIdQuery, LoanDTO>, GetLoanByIdUseCase>();
 
             return services;
         }

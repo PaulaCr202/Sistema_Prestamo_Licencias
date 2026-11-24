@@ -18,9 +18,9 @@ namespace Loans.Api.Middleware
                 context.Response.StatusCode = ex switch
                 {
                     BussinesRuleException => StatusCodes.Status400BadRequest,
-                    NotFoundException => StatusCodes.Status404NotFound,
                     ForbiddenException => StatusCodes.Status403Forbidden,
-                    ExternalServiceException => StatusCodes.Status503ServiceUnavailable,
+                    NotFoundException => StatusCodes.Status404NotFound,
+                    ExternalServiceException => StatusCodes.Status502BadGateway, // antes 503
                     _ => StatusCodes.Status500InternalServerError,
                 };
 

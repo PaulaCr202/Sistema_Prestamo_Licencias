@@ -1,6 +1,72 @@
-@Loans.Api_HostAddress = http://localhost:5119
+@gateway = http://localhost:5000
+@identity = http://localhost:5086
+@loans = http://localhost:5090
+@softwareId = 01A20EF8-197D-7732-B9FB-6782C9B83ABF
 
-GET {{Loans.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+@userToken = {{loginUser.response.body.$.data.accessToken}}
+@adminToken = {{loginAdmin.response.body.$.data.accessToken}}
 
-###
+### 1. Login como usuario normal
+# @name loginUser
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "user@licencias.local", "password": "1234" }
+
+### 2. Login como admin
+# @name loginAdmin
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@licencias.local", "password": "1234*" }
+
+### 3. Pedir préstamo (usuario)
+# @name createLoan
+POST {{loans}}/api/loans
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{ "softwareId": "{{softwareId}}", "days": 5 }
+
+@loanId = {{createLoan.response.body.$.id}}
+
+### 4. Mis préstamos (usuario)
+GET {{loans}}/api/loans/mine
+Authorization: Bearer {{userToken}}
+
+### 5. Todos los préstamos (Admin) - 200
+GET {{loans}}/api/loans
+Authorization: Bearer {{adminToken}}
+
+### 6. Todos los préstamos con usuario normal - 403
+GET {{loans}}/api/loans
+Authorization: Bearer {{userToken}}
+
+### 7. Extender
+POST {{loans}}/api/loans/{{loanId}}/extend
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{ "extraDays": 3 }
+
+### 8. Devolver
+POST {{loans}}/api/loans/{{loanId}}/return
+Authorization: Bearer {{userToken}}
+
+### 9. Devolver otra vez - 400 "ya fue devuelto"
+POST {{loans}}/api/loans/{{loanId}}/return
+Authorization: Bearer {{userToken}}
+
+### 10. Préstamo inexistente - 404
+POST {{loans}}/api/loans/00000000-0000-0000-0000-000000000001/return
+Authorization: Bearer {{userToken}}
+
+### 11. Sin token - 401
+GET {{loans}}/api/loans/mine
+
+### 12. Caso de error del video: apagar Catalog y pedir préstamo - 502 "Catalog no está disponible."
+POST {{loans}}/api/loans
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{ "softwareId": "{{softwareId}}", "days": 5 }
