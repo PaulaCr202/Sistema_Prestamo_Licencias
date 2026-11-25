@@ -1,0 +1,47 @@
+@gateway = http://localhost:5000
+
+# Flujo completo a través del gateway (puerto 5000).
+# Arrancar Identity, Catalog, Loans y Gateway; ejecutar de arriba hacia abajo.
+
+### 1. Login usuario normal
+# @name loginUser
+POST {{gateway}}/identity/auth/login
+Content-Type: application/json
+
+{ "email": "user@licencias.local", "password": "1234" }
+
+### 2. Ver el catálogo de software
+# @name softwareList
+GET {{gateway}}/catalog/software
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 3. Ver licencias (antes del préstamo)
+GET {{gateway}}/catalog/license
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 4. Pedir préstamo del primer software (debe dar 201)
+# @name createLoan
+POST {{gateway}}/loans/loans
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+Content-Type: application/json
+
+{ "softwareId": "{{softwareList.response.body.$.items[0].id}}", "days": 7 }
+
+### 5. Ver licencias: la del préstamo debe aparecer con isAvailable en false
+GET {{gateway}}/catalog/license
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 6. Mis préstamos (debe aparecer el préstamo activo)
+GET {{gateway}}/loans/loans/mine
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 7. Devolver el préstamo (debe dar 200)
+POST {{gateway}}/loans/loans/{{createLoan.response.body.$.id}}/return
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 8. Ver licencias: la misma licencia debe volver a isAvailable en true
+GET {{gateway}}/catalog/license
+Authorization: Bearer {{loginUser.response.body.$.data.accessToken}}
+
+### 9. Ruta sin token a través del gateway (debe dar 401: el gateway no valida, lo hace el servicio)
+GET {{gateway}}/catalog/software
