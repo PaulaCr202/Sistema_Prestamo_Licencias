@@ -46,3 +46,29 @@ export async function createLoan(softwareId, days) {
   }
   return apiFetch(ENDPOINTS.createLoan, { method: 'POST', body: { softwareId, days } });
 }
+
+
+// Consultar los préstamos del usuario autenticado.
+export async function getMyLoans() {
+    return apiFetch(ENDPOINTS.myLoans);
+}
+
+// Consultar todos los préstamos (solo Admin).
+export async function getAllLoans() {
+    return apiFetch(ENDPOINTS.allLoans);
+}
+
+// Devolver un préstamo.
+export async function returnLoan(id) {
+    return apiFetch(ENDPOINTS.returnLoan(id), {
+        method: 'POST',
+    });
+}
+
+// Extender un préstamo.
+export async function extendLoan(id, extraDays) {
+    return apiFetch(ENDPOINTS.extendLoan(id), {
+        method: 'POST',
+        body: { extraDays },
+    });
+}
